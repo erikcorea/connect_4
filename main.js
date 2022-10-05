@@ -25,8 +25,29 @@ function setGame(){
             let tile = document.createElement("div");
             tile.id = r.toString() + "-" + c.toString();
             tile.classList.add("tile");
+            tile.addEventListener('click', setPiece);
             document.getElementById("board").append(tile);
         }
         board.push(row);
+    }
+}
+
+function setPiece(){
+    if(gameOver){
+        return;
+    }
+
+    let cords = this.id.split('-');
+    let r = parseInt(cords[0]);
+    let c = parseInt(cords[1]);
+
+    board[r][c] = currPlayer;
+    let tile = this;
+    if(currPlayer == playerRed){
+        tile.classList.add('red-piece');
+        currPlayer = playerYellow;
+    } else {
+        tile.classList.add('yellow-piece');
+        currPlayer = playerRed;
     }
 }
