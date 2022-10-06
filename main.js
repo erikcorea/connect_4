@@ -5,17 +5,20 @@ var currPlayer = playerRed;
 
 var gameOver  = false;
 var board;
+var currColumns; 
 
 var rows = 6;
 var coloumns = 7;
 
 window.onload = function(){
     setGame();
+
 }
 
 
 function setGame(){
     board = [];
+    currColumns = [5,5,5,5,5,5,5]
 
     for(let r = 0; r < rows; r++){
         let row = [];
@@ -40,9 +43,13 @@ function setPiece(){
     let cords = this.id.split('-');
     let r = parseInt(cords[0]);
     let c = parseInt(cords[1]);
+    r = currColumns[c];
+    if(r < 0){
+        return;
+    }
 
     board[r][c] = currPlayer;
-    let tile = this;
+    let tile = document.getElementById(r.toString() + '-' + c.toString());
     if(currPlayer == playerRed){
         tile.classList.add('red-piece');
         currPlayer = playerYellow;
@@ -50,4 +57,66 @@ function setPiece(){
         tile.classList.add('yellow-piece');
         currPlayer = playerRed;
     }
+    r -= 1;
+    currColumns[c] = r;
+
+    checkWinenr();
+}
+
+function checkWinenr(){
+    for(let r = 0; r < rows; r++){
+        for(let c = 0; c < coloumns - 3; c++){
+            if(board[r][c] != ' '){
+                if(board[r][c] == board[r][c+1] && board[r][c+1] == board[r][c+2] && board[r][c+2] == board[r][c+3]){
+                    setWinner(r,c);
+                    return;
+                }
+            }
+        }
+    }
+
+    for(let c = 0; c < coloumns; c++){
+        for(let r = 0; r < rows - 3; r++){
+            if(board[r][c] != ' '){
+                if(board[r][c] == board[r+1][c] && board[r+1][c] == board[r+2][c] && board[r+2][c] == board[r+3][c]){
+                    setWinner(r,c);
+                    return;
+                }
+            }
+        }
+    }
+
+    // anti diagonal
+    for (let r = 0; r < rows - 3; r++) {
+        for (let c = 0; c < coloumns - 3; c++) {
+            if (board[r][c] != ' ') {
+                if (board[r][c] == board[r+1][c+1] && board[r+1][c+1] == board[r+2][c+2] && board[r+2][c+2] == board[r+3][c+3]) {
+                    setWinner(r, c);
+                    return;
+                }
+            }
+        }
+    }
+
+    // diagonal
+    for (let r = 3; r < rows; r++) {
+        for (let c = 0; c < coloumns - 3; c++) {
+            if (board[r][c] != ' ') {
+                if (board[r][c] == board[r-1][c+1] && board[r-1][c+1] == board[r-2][c+2] && board[r-2][c+2] == board[r-3][c+3]) {
+                    setWinner(r, c);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function setWinner(r,c){
+    let winner = document.getElementById("winner");
+    if(board[r][c] == playerRed){
+        winner.innerText = "Red Wins";
+    } else {
+        window.innerText = "Yellow Wins";
+    }
+    gameOver = true;
 }
